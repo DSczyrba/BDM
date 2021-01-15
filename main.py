@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
-
+from model.nutzer_model import NutzerModel
 
 def run():
     app = QApplication(sys.argv)
