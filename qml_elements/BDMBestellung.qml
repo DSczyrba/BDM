@@ -101,12 +101,6 @@ Pane {
                 id: name
                 anchors.fill: parent
                 editable: false
-                model: ListModel {
-                    id: model
-                    ListElement { text: "Banana" }
-                    ListElement { text: "Apple" }
-                    ListElement { text: "Coconut" }
-                }
             }
         }
 
@@ -144,6 +138,15 @@ Pane {
             Layout.rowSpan: 1
             Layout.row: 4
             Layout.column: 2
+
+            Button {
+                id: btn
+                anchors.fill: parent
+                text: "TEST"
+                onClicked: {
+                    nutzermodel.print();
+                }
+            }
         }
 
         Rectangle {
@@ -187,7 +190,7 @@ Pane {
         }
     }
 
-     Component {
+    Component {
         id: produktHeading
         Rectangle {
             border {color: "black"; width: 5}
@@ -201,5 +204,5 @@ Pane {
                 anchors.centerIn: parent
             }
         }
-     }
+    }
 }

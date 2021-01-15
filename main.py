@@ -1,16 +1,15 @@
 import sys
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
-
+from model.nutzer_model import NutzerModel
 
 def run():
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
+    nutzer_model = NutzerModel(engine)
+    engine.rootContext().setContextProperty("nutzermodel", nutzer_model)
     engine.load('main.qml')
-
-    if not engine.rootObjects():
-        return -1
 
     return app.exec_()
 

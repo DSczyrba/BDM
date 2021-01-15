@@ -1,11 +1,14 @@
 import os, sys, sqlite3 as sql
-
-from PyQt5.QtCore import QObject
+from PyQt5 import QtQml
+from PyQt5.QtCore import *
 
 
 class NutzerModel:
-    def __init__(self):
+
+    def __init__(self, engine):
+        self.m_engine = engine
         self.user_db_file = f'{os.getcwd()}/data/data.db'
+        self.signalName = pyqtSignal(str, arguments=["print"])
         if os.path.exists(self.user_db_file):
             pass
         else:
@@ -63,10 +66,11 @@ class NutzerModel:
     def select_users(self):
         sql_query = self.db_cursor.execute(f"SELECT * FROM user;")
         all_users = []
+        all_names = []
         for user in sql_query:
             all_users.append({"Name": user[0], "Bild": user[1], "Konto": user[3],
                               "Verein": user[2], "Aktiv": user[4]})
-        return all_users
+        return all_names
 
     def transaction(self, name, konto):
         self.db_cursor.execute(f"UPDATE user "
@@ -77,8 +81,12 @@ class NutzerModel:
     def close_db(self):
         self.db_connection.close()
 
+    @pyqtSlot(str)
+    def print(self, name):
+        print("Hallo")
 
-one_user = NutzerModel()
+
+#one_user = NutzerModel()
 #if not one_user.create_user("Eric", "Bild", "1"):
 #    print("Der Nutzer existiert bereits!")
 
@@ -89,8 +97,8 @@ one_user = NutzerModel()
 #    print("Nutzer konnte nicht gelöscht werden!")
 
 
-test = one_user.select_users()
-for line in test:
-    print(line)
-one_user.close_db()
+#test = one_user.select_users()
+#for line in test:
+#    print(line)
+#one_user.close_db()
 
