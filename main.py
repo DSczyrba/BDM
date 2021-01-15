@@ -13,7 +13,6 @@ def run():
         return -1
 
     return app.exec_()
-#penis
 
 if __name__ == '__main__':
     sys.exit(run())
