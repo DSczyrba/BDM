@@ -1,5 +1,7 @@
 import os, sys, sqlite3 as sql
 
+from PyQt5.QtCore import QObject
+
 
 class NutzerModel:
     def __init__(self):
@@ -33,7 +35,7 @@ class NutzerModel:
     def create_user(self, name, picture, member, active=1, konto=0.00):
         try:
             self.db_cursor.execute(f"INSERT INTO user(name, picture, member, konto, active) "
-                               f"VALUES('{name}', '{picture}', {member}, {konto}, {active});")
+                                   f"VALUES('{name}', '{picture}', {member}, {konto}, {active});")
             self.db_connection.commit()
             return True
         except sql.IntegrityError:
@@ -51,20 +53,29 @@ class NutzerModel:
 
     def delete_user(self, name):
         try:
+            print(f"DELETE FROM user WHERE name='{name}';")
             self.db_cursor.execute(f"DELETE FROM user WHERE name='{name}';")
+            self.db_connection.commit()
             return True
         except sql.IntegrityError:
             return False
 
-    def select_users(self, name):
-        element = self.db_cursor.execute(f"SELECT * FROM user;")
-        return element
+    def select_users(self):
+        sql_query = self.db_cursor.execute(f"SELECT * FROM user;")
+        all_users = []
+        for user in sql_query:
+            all_users.append({"Name": user[0], "Bild": user[1], "Konto": user[3],
+                              "Verein": user[2], "Aktiv": user[4]})
+        return all_users
 
     def transaction(self, name, konto):
         self.db_cursor.execute(f"UPDATE user "
                                f"SET konto={konto}"
                                f"WHERE name={name};")
         self.db_connection.commit()
+
+    def close_db(self):
+        self.db_connection.close()
 
 
 one_user = NutzerModel()
@@ -74,8 +85,12 @@ one_user = NutzerModel()
 #if not one_user.edit_user("Ficken", "Eric", "Bild2", "1", "1"):
 #    print("Der Nutzer konnte nicht bearbeitet werden!")
 
-if not one_user.delete_user("Eric"):
-    print("Nutzer konnte nicht gelöscht werden!")
+#if not one_user.delete_user("Eric"):
+#    print("Nutzer konnte nicht gelöscht werden!")
 
 
+test = one_user.select_users()
+for line in test:
+    print(line)
+one_user.close_db()
 
