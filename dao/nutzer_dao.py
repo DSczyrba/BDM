@@ -5,8 +5,8 @@ from PyQt5.QtCore import *
 
 class NutzerDao:
 
-    def __init__(self, engine):
-        self.m_engine = engine
+    def __init__(self):
+        #self.m_engine = engine
         self.user_db_file = f'{os.getcwd()}/data/data.db'
         self.signalName = pyqtSignal(str, arguments=["print"])
         if os.path.exists(self.user_db_file):
@@ -66,11 +66,10 @@ class NutzerDao:
     def select_users(self):
         sql_query = self.db_cursor.execute(f"SELECT * FROM user;")
         all_users = []
-        all_names = []
         for user in sql_query:
             all_users.append({"Name": user[0], "Bild": user[1], "Konto": user[3],
                               "Verein": user[2], "Aktiv": user[4]})
-        return all_names
+        return all_users
 
     def transaction(self, name, konto):
         self.db_cursor.execute(f"UPDATE user "
@@ -81,9 +80,6 @@ class NutzerDao:
     def close_db(self):
         self.db_connection.close()
 
-    @pyqtSlot(str)
-    def print(self, name):
-        print("Hallo")
 
 
 #one_user = NutzerModel()

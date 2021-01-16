@@ -102,9 +102,6 @@ Pane {
                 anchors.fill: parent
                 editable: false
 
-                component.onCompleted: {
-
-                }
             }
         }
 
@@ -148,7 +145,7 @@ Pane {
                 anchors.fill: parent
                 text: "TEST"
                 onClicked: {
-                    nutzermodel.print();
+                    bestellungcontroller.get_users()
                 }
             }
         }

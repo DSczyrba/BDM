@@ -1,17 +1,13 @@
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent
-from model.nutzer_model import NutzerModel
+from controller.bestellung_controller import BestellungController
 
 def run():
-    app = QApplication(sys.argv)
+    app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
-    component = QQmlComponent(engine)
-    nutzer_model = NutzerModel(engine)
-    engine.rootContext().setContextProperty("nutzermodel", NutzerModel)
-    component.loadUrl(QUrl('main.qml'))
-    name = component.create()
+    bestellungcontroller = BestellungController()
+    engine.rootContext().setContextProperty("bestellungcontroller", bestellungcontroller)
     engine.load('main.qml')
 
     return app.exec_()

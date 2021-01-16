@@ -1,12 +1,8 @@
-import sys
-
 from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
-from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 
 class NutzerModel(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self._model = []
 
     @pyqtProperty(list)
