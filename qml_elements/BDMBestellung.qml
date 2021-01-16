@@ -101,6 +101,10 @@ Pane {
                 id: name
                 anchors.fill: parent
                 editable: false
+
+                component.onCompleted: {
+
+                }
             }
         }
 
