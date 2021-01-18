@@ -12,6 +12,17 @@ Pane {
         }
     }
 
+    Connections {
+        target: bestellungcontroller
+        function onNutzerDatenAktualisiert(namensliste) {
+            name.model = namensliste;
+        }
+        function onAnzeigeDatenAktualiesieren(konto, mitglied) {
+            btn.text = 'Kontostand: ', konto.toString();
+            mitglied.text = mitglied.toString();
+        }
+    }
+
     GridLayout {
         id: grid
         anchors.fill: parent
@@ -101,7 +112,10 @@ Pane {
                 id: name
                 anchors.fill: parent
                 editable: false
-
+                model: nutzerliste
+                onCurrentIndexChanged: {
+                    bestellungcontroller.getCurrentCBData(currentIndex)
+                }
             }
         }
 
@@ -145,7 +159,7 @@ Pane {
                 anchors.fill: parent
                 text: "TEST"
                 onClicked: {
-                    bestellungcontroller.get_users()
+                    bestellungcontroller.getUsers()
                 }
             }
         }
@@ -158,6 +172,11 @@ Pane {
             Layout.rowSpan: 1
             Layout.row: 5
             Layout.column: 2
+
+            Text {
+                id: mitglied
+                text: 'test'
+            }
         }
 
         Rectangle {

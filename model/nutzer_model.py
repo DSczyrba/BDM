@@ -1,15 +1,33 @@
-from PyQt5.QtCore import pyqtProperty, QCoreApplication, QObject, QUrl
+from PyQt5.QtCore import pyqtProperty, QObject, QAbstractListModel
+
 
 class NutzerModel(QObject):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self._model = []
+    def __init__(self):
+        super(NutzerModel, self).__init__()
+        self._names = []
+        self._konto = []
+        self._mitglied = []
 
     @pyqtProperty(list)
-    def model(self):
-        return self._model
+    def names(self):
+        return self._names
 
-    # Define the setter of the 'name' property.
-    @model.setter
-    def model(self, model):
-        self._model = model
+    @names.setter
+    def names(self, names):
+        self._names = names
+
+    @pyqtProperty(list)
+    def konto(self):
+        return self.konto
+
+    @konto.setter
+    def konto(self, konto):
+        self._konto = konto
+
+    @pyqtProperty(list)
+    def mitglied(self):
+        return self._mitglied
+
+    @mitglied.setter
+    def mitglied(self, mitglied):
+        self._mitglied = mitglied
