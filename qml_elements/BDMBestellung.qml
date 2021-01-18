@@ -14,19 +14,24 @@ Pane {
 
     Connections {
         target: bestellungcontroller
+
         function onNutzerDatenAktualisiert(namensliste) {
             name.model = namensliste;
         }
         function onAnzeigeDatenAktualiesieren(konto, mitglied) {
-            btn.text = 'Kontostand: ', konto.toString();
-            mitglied.text = mitglied.toString();
+            //console.log('konto ', konto, 'mitglied ', mitglied );
+            if (konto == '0.00') {
+                txtKonto.color = 'red';
+            }
+            txtKonto.text = 'Kontostand: ' + konto;
+            txtMitglied.text = mitglied;
         }
     }
 
     GridLayout {
         id: grid
         anchors.fill: parent
-        rows: 8
+        rows: 6
         columns: 3
 
         Rectangle {
@@ -34,7 +39,7 @@ Pane {
             Layout.fillHeight: true
             Layout.minimumWidth: parent.width/1.8
             Layout.columnSpan: 1
-            Layout.rowSpan: 8
+            Layout.rowSpan: 6
             Layout.row: 0
             Layout.column: 0
 
@@ -71,7 +76,7 @@ Pane {
             Layout.minimumHeight: parent.height/2
             Layout.fillWidth: true
             Layout.columnSpan: 2
-            Layout.rowSpan: 2
+            Layout.rowSpan: 1
             Layout.row: 0
             Layout.column: 1
 
@@ -105,7 +110,7 @@ Pane {
             Layout.fillWidth: true
             Layout.columnSpan: 2
             Layout.rowSpan: 1
-            Layout.row: 2
+            Layout.row: 1
             Layout.column: 1
 
             ComboBox {
@@ -116,6 +121,9 @@ Pane {
                 onCurrentIndexChanged: {
                     bestellungcontroller.getCurrentCBData(currentIndex)
                 }
+                Component.onCompleted: {
+                    bestellungcontroller.getUsers()
+                }
             }
         }
 
@@ -124,8 +132,8 @@ Pane {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.columnSpan: 1
-            Layout.rowSpan: 3
-            Layout.row: 3
+            Layout.rowSpan: 2
+            Layout.row: 2
             Layout.column: 1
         }
 
@@ -135,13 +143,19 @@ Pane {
             Layout.fillWidth: true
             Layout.columnSpan: 1
             Layout.rowSpan: 1
-            Layout.row: 3
+            Layout.row: 2
             Layout.column: 2
 
-            Label {
-                text: name.currentText
-                font.pixelSize: 22
-                font.italic: true
+            Text {
+                id: txtKonto
+                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.topMargin: parent.height/2-6
+                anchors.leftMargin: 10
+                font.family: "fontawsome"
+                font.pointSize: 12
+                font.bold: true
+                color: "black"
             }
         }
 
@@ -151,17 +165,30 @@ Pane {
             Layout.fillWidth: true
             Layout.columnSpan: 1
             Layout.rowSpan: 1
-            Layout.row: 4
+            Layout.row: 3
             Layout.column: 2
 
-            Button {
-                id: btn
+            Text {
+                id: txtMitglied
                 anchors.fill: parent
-                text: "TEST"
-                onClicked: {
-                    bestellungcontroller.getUsers()
-                }
+                anchors.left: parent.left
+                anchors.topMargin: parent.height/2-6
+                anchors.leftMargin: 10
+                font.family: "fontawsome"
+                font.pointSize: 12
+                font.bold: true
+                color: "black"
             }
+        }
+
+        Rectangle {
+            color: "blue"
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.columnSpan: 2
+            Layout.rowSpan: 1
+            Layout.row: 4
+            Layout.column: 1
         }
 
         Rectangle {
@@ -171,21 +198,6 @@ Pane {
             Layout.columnSpan: 1
             Layout.rowSpan: 1
             Layout.row: 5
-            Layout.column: 2
-
-            Text {
-                id: mitglied
-                text: 'test'
-            }
-        }
-
-        Rectangle {
-            color: "white"
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.columnSpan: 2
-            Layout.rowSpan: 1
-            Layout.row: 6
             Layout.column: 1
         }
 
@@ -195,17 +207,7 @@ Pane {
             Layout.fillWidth: true
             Layout.columnSpan: 1
             Layout.rowSpan: 1
-            Layout.row: 7
-            Layout.column: 1
-        }
-
-        Rectangle {
-            color: "white"
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.columnSpan: 1
-            Layout.rowSpan: 1
-            Layout.row: 7
+            Layout.row: 5
             Layout.column: 2
         }
     }

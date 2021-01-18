@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 class BestellungController(QObject):
 
     nutzerDatenAktualisiert = pyqtSignal(list)
-    anzeigeDatenAktualiesieren = pyqtSignal(float, int)
+    anzeigeDatenAktualiesieren = pyqtSignal(str, str)
 
     def __init__(self):
         QObject.__init__(self)
@@ -36,4 +36,10 @@ class BestellungController(QObject):
     def getCurrentCBData(self, currentIndex):
         konto = self._nutzermodel._konto[currentIndex]
         mitglied = self._nutzermodel._mitglied[currentIndex]
-        self.anzeigeDatenAktualiesieren.emit(konto, mitglied)
+        if konto == 0.0:
+            konto = '0.00'
+        if mitglied == 0:
+            mitglied = 'Besucher'
+        else:
+            mitglied = 'Vereinsmitglied'
+        self.anzeigeDatenAktualiesieren.emit(str(konto), str(mitglied))
