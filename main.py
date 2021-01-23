@@ -2,8 +2,6 @@ import sys
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent, qmlRegisterType, QQmlEngine
 from controller.bestellung_controller import BestellungController
-from model.nutzer_model import NutzerModel
-
 
 def run():
     app = QGuiApplication(sys.argv)

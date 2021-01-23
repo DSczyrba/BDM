@@ -7,6 +7,7 @@ class NutzerModel(QObject):
         self._names = []
         self._konto = []
         self._mitglied = []
+        self._bild = []
 
     @pyqtProperty(list)
     def names(self):
@@ -31,3 +32,11 @@ class NutzerModel(QObject):
     @mitglied.setter
     def mitglied(self, mitglied):
         self._mitglied = mitglied
+
+    @pyqtProperty(list)
+    def bild(self):
+        return self._bild
+
+    @bild.setter
+    def bild(self, bild):
+        self._bild = bild
