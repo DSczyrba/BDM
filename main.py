@@ -1,16 +1,18 @@
 import sys
-from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtQml import QQmlApplicationEngine
-from model.nutzer_model import NutzerModel
+from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent, qmlRegisterType, QQmlEngine
+from controller.bestellung_controller import BestellungController
 
 def run():
-    app = QApplication(sys.argv)
-    engine = QQmlApplicationEngine()
-    engine.load('main.qml')
+    app = QGuiApplication(sys.argv)
 
-    if not engine.rootObjects():
-        return -1
+    engine = QQmlApplicationEngine()
+
+    #Zugriff auf die python-Klassen von qml
+    bestellungcontroller = BestellungController()
+    engine.rootContext().setContextProperty("bestellungcontroller", bestellungcontroller)
+
+    engine.load('main.qml')
 
     return app.exec_()
 
