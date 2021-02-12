@@ -33,6 +33,9 @@ Pane {
             txtMitglied.text = userdata[1];
             profilbild.source = userdata[2];
         }
+        function onCbIndexAktualisieren(index) {
+            name.currentIndex = index;
+        }
     }
 
     GridLayout {
@@ -364,6 +367,7 @@ Pane {
                         font.pointSize: 24
                         color: "black"
                         anchors.centerIn: parent
+                        font.bold: true
                     }
                 }
             }
@@ -398,6 +402,7 @@ Pane {
                         font.pointSize: 24
                         color: "black"
                         anchors.centerIn: parent
+                        font.bold: true
                     }
                 }
             }
