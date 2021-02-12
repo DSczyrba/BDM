@@ -6,6 +6,7 @@ class BestellungController(QObject):
 
     nutzerDatenAktualisiert = pyqtSignal(list)
     anzeigeDatenAktualiesieren = pyqtSignal(list)
+    cbIndexAktualisieren = pyqtSignal(int)
 
     def __init__(self):
         QObject.__init__(self)
@@ -51,3 +52,7 @@ class BestellungController(QObject):
             mitglied = 'Vereinsmitglied'
 
         self.anzeigeDatenAktualiesieren.emit([str(konto), str(mitglied), str(bild)])
+
+    @pyqtSlot(int)
+    def updateCBIndex(self, index):
+        self.cbIndexAktualisieren.emit(index)

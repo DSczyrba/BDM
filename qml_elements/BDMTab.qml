@@ -37,6 +37,11 @@ Pane {
                 color: bestellung.checked ? "#dcdcdc" : "#f8f8ff"
                 opacity: enabled ? 1 : 0.3
             }
+
+            onClicked: {
+                bestellungcontroller.getCurrentCBData(0);
+                bestellungcontroller.updateCBIndex(0);
+            }
         }
 
         TabButton {
@@ -90,6 +95,11 @@ Pane {
             background: Rectangle {
                 color: nutzerverwaltung.checked ? "#dcdcdc" : "#f8f8ff"
                 opacity: enabled ? 1 : 0.3
+            }
+
+            onClicked: {
+                bestellungcontroller.getCurrentCBData(0);
+                bestellungcontroller.updateCBIndex(0);
             }
         }
 
