@@ -7,35 +7,30 @@ Pane {
     background: Rectangle {
         anchors.fill: parent
     }
-    ScrollView {
-        anchors.fill: parent
-        ScrollBar.vertical.interactive: true
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-        ScrollBar.horizontal.policy: ScrollBal.AlwaysOff
-
-        ListView {
-            id: productView
-            model: produktListe
-            boundsBehavior: Flickable.StopAtBounds
-            interactive: false
-            spacing: 5
-            clip: true
-
-            Rectangle {
+    
+    Component {
+        id: contactDelegate
+        Item {
+            width: gridview.cellWidth; height: gridview.cellHeight
+            Grid {
                 anchors.fill: parent
-                color: "white"
-                border.width: 0.2
-                border.color: "black"
-                z: -1
-            }
-            delegate: BDMProdukt {
-                propLVModel: model.valueList
-                Binding {
-                   target: model
-                   property: "valueList"
-                   value: propLVModel
-                }
+                columns: 2
+                spacing: 2
+                Image { id: pIm; source: portrait; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter}
+                Text { id: pName; text: name; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pIm.bottom}
+                TextField { text: "Text"; cursorVisible: false; anchors.left: pName.right; anchors.top: pIm.bottom; anchors.leftMargin: 20}
+                Text { id: pPreis; text: preis; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pName.bottom}
+                TextField { text: "Text"; cursorVisible: false; anchors.left: pPreis.right; anchors.top: pName.bottom; anchors.leftMargin: 20}
             }
         }
+    }
+
+    GridView {
+        id: gridview
+        header: produktHeading
+        anchors.fill: parent
+        cellWidth: parent.width / 3; cellHeight: parent.height / 3
+        model: produktModel
+        delegate: contactDelegate         
     }
 }

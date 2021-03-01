@@ -19,7 +19,7 @@ Pane {
         target: bestellungcontroller
 
         function onNutzerDatenAktualisiert(namensliste) {
-            name.model = namensliste;
+            nameCB.model = namensliste;
         }
         function onAnzeigeDatenAktualiesieren(userdata) {
             console.log('konto ', userdata[0], 'mitglied ', userdata[1], 'bild ', userdata[2]);
@@ -34,7 +34,7 @@ Pane {
             profilbild.source = userdata[2];
         }
         function onCbIndexAktualisieren(index) {
-            name.currentIndex = index;
+            nameCB.currentIndex = index;
         }
     }
 
@@ -45,7 +45,6 @@ Pane {
         columns: 3
 
         Rectangle {
-            color: "red"
             Layout.fillHeight: true
             Layout.minimumWidth: parent.width/1.8
             Layout.columnSpan: 1
@@ -53,33 +52,79 @@ Pane {
             Layout.row: 0
             Layout.column: 0
 
-
-            ListView {
-                id: listView
-                //model: bestellungsmodel
-                anchors.fill: parent
-                interactive: true
-                clip: true
-                header: produktHeading
-
-                Rectangle {
-                    anchors.fill: parent
-                    border.width: 0.1
-                    border.color: 'black'
-                    z: -1
-                    gradient: Gradient {
-                        GradientStop { position: 0.6; color: 'white'}
-                        GradientStop { position: 1.0; color: 'lightgrey'}
-
-                    }
-                    ScrollView {
+            Component {
+                id: productDelegate
+                Item {
+                    width: gridview.cellWidth; height: gridview.cellHeight
+                    Column {
                         anchors.fill: parent
-                        ScrollBar.vertical.interactive: true
-                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                        Image { id: pIm; source: portrait; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter}
+                        Text { id: pName; text: name; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pIm.bottom }
+                        Text { text: preis; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pName.bottom}
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                console.log('moin', model.name, model.preis)
+                                bestellModel.addProdukt(model.name, model.preis)
+                                var fEndsumme = endsumme.text.replace('€', '')
+                                var summe = parseFloat(fEndsumme) + parseFloat(model.preis)
+                                endsumme.text = summe
+                            }
+                        }
                     }
                 }
             }
+
+            GridView {
+                id: gridview
+                header: produktHeading
+                anchors.fill: parent
+                cellWidth: parent.width / 3; cellHeight: parent.height / 3
+                model: produktModel
+                delegate: productDelegate          
+            }
+
+
+            // ListModel {
+            //     id: contactModel
+            //     ListElement {
+            //         name: "Eric"
+            //         preis: "1.50€"
+            //         portrait: "src/beer-icon.png"
+            //     }
+            //     ListElement {
+            //         name: "Dominic"
+            //         preis: "1.50€"
+            //         portrait: "src/beer-icon.png"
+            //     }
+            // }
+
+            // ListView {
+            //     id: listView
+            //     //model: bestellungsmodel
+            //     anchors.fill: parent
+            //     interactive: true
+            //     clip: true
+            //     header: produktHeading
+
+            //     Rectangle {
+            //         anchors.fill: parent
+            //         border.width: 0.1
+            //         border.color: 'black'
+            //         z: -1
+            //         gradient: Gradient {
+            //             GradientStop { position: 0.6; color: 'white'}
+            //             GradientStop { position: 1.0; color: 'lightgrey'}
+
+            //         }
+            //         ScrollView {
+            //             anchors.fill: parent
+            //             ScrollBar.vertical.interactive: true
+            //             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            //             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            //         }
+            //     }
+            // }
         }
 
         Rectangle {
@@ -92,12 +137,18 @@ Pane {
             Layout.column: 1
 
             ListView {
-                id: kassenzettelListe
+                id: bestellListe
                 //model: kassenzettelmodel
                 anchors.fill: parent
                 interactive: true
                 clip: true
+                model: bestellModel
                 header: kassenHeading
+                delegate: Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: name + "\t\t\t\t\t" + preis
+                    font.pointSize: 12
+                }
 
                 Rectangle {
                     anchors.fill: parent
@@ -110,12 +161,12 @@ Pane {
                         GradientStop { position: 0.8; color: 'white'}
                         GradientStop { position: 1.0; color: 'lightgrey'}
                     }
-                    ScrollView {
-                        anchors.fill: parent
-                        ScrollBar.vertical.interactive: true
-                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-                    }
+                    // ScrollView {
+                    //     anchors.fill: parent
+                    //     ScrollBar.vertical.interactive: true
+                    //     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                    //     ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                    // }
                 }
             }
         }
@@ -166,7 +217,7 @@ Pane {
             Layout.column: 1
 
             ComboBox {
-                id: name
+                id: nameCB
                 anchors.fill: parent
                 editable: false
                 model: nutzerliste
@@ -176,44 +227,7 @@ Pane {
                 }
                 Component.onCompleted: {
                     bestellungcontroller.getUsers()
-                }
-                background: Rectangle {
-                    color: "#95A4A8"
-                    radius: 5
-                }
-
-                delegate: ItemDelegate {
-                    id:itemDlgt
-                    width: name.width
-                    height:40
-                    padding:0
-
-                    contentItem: Text {
-                      id:textItem
-                      text: modelData
-                      color: hovered?"white":"#black"
-                      verticalAlignment: Text.AlignVCenter
-                      horizontalAlignment: Text.AlignHCenter
-                      font.family: "fontawsome"
-                      font.pointSize: 12
-                      font.bold: true
-                    }
-
-                    background: Rectangle {
-                        color:itemDlgt.hovered?"lightgrey":"white";
-                        anchors.left: itemDlgt.left
-                        anchors.leftMargin: 0
-                        width:itemDlgt.width-2
-                    }
-                }
-               contentItem: Text {
-                     text: name.displayText
-                     font: name.font
-                     color: "white"
-                     verticalAlignment: Text.AlignVCenter
-                     horizontalAlignment: Text.AlignLeft
-                     elide: Text.ElideRight
-               }
+                }            
             }
         }
 
@@ -319,6 +333,86 @@ Pane {
                 id: listeBtn
                 anchors.fill: parent
                 text: "Liste"
+                onClicked: popup1.open()
+            }
+            Popup {
+                id: popup1
+
+                parent: Overlay.overlay
+
+                x: Math.round((parent.width - width) / 2)
+                y: Math.round((parent.height - height) / 2)
+                width: 500
+                height: 100
+
+                GridLayout {
+                    anchors.fill: parent
+                    rows: 2
+                    columns: 2
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.columnSpan: 2
+                        Layout.rowSpan: 1
+                        Layout.row: 0
+                        Layout.column: 0
+
+                        Text {text: "Auf Liste schreiben?"}
+                    }
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.columnSpan: 1
+                        Layout.rowSpan: 1
+                        Layout.row: 1
+                        Layout.column: 0
+
+                        Button {
+                            anchors.fill: parent
+                            text: "Abbrechen"
+                            onClicked: {
+                                popup1.close()
+                                var count = bestellModel.rowCount()
+                                console.log(count)
+                                var i
+                                for (i = count-1; i >= 0; i--) {
+                                    console.log(i)
+                                    bestellModel.deleteProdukt(i)
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.columnSpan: 1
+                        Layout.rowSpan: 1
+                        Layout.row: 1
+                        Layout.column: 1
+
+                        Button {
+                            anchors.fill: parent
+                            text: "Ok"
+                            onClicked: {
+                                popup1.close()
+                                var count = bestellModel.rowCount()
+                                console.log(count)
+                                var i
+                                for (i = count-1; i >= 0; i--) {
+                                    console.log(i)
+                                    bestellModel.deleteProdukt(i)
+                                }
+                                var konto = txtKonto.text.replace("Kontostand:", "")
+                                console.log(konto)
+                                var neuKonto = eval(konto - endsumme.text)
+                                txtKonto.text = 'Kontostand: ' + neuKonto
+                                endsumme.text = '0.00'
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -335,6 +429,82 @@ Pane {
                 id: barBtn
                 anchors.fill: parent
                 text: "Bar"
+                onClicked: popup.open()
+            }
+
+            Popup {
+                id: popup
+
+                parent: Overlay.overlay
+
+                x: Math.round((parent.width - width) / 2)
+                y: Math.round((parent.height - height) / 2)
+                width: 500
+                height: 100
+
+                GridLayout {
+                    anchors.fill: parent
+                    rows: 2
+                    columns: 2
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.columnSpan: 2
+                        Layout.rowSpan: 1
+                        Layout.row: 0
+                        Layout.column: 0
+
+                        Text {text: "Soll wirklich bar bezahlt werden?"}
+                    }
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.columnSpan: 1
+                        Layout.rowSpan: 1
+                        Layout.row: 1
+                        Layout.column: 0
+
+                        Button {
+                            anchors.fill: parent
+                            text: "Abbrechen"
+                            onClicked: {
+                                popup.close()
+                                var count = bestellModel.rowCount()
+                                console.log(count)
+                                var i
+                                for (i = count-1; i >= 0; i--) {
+                                    console.log(i)
+                                    bestellModel.deleteProdukt(i)
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.columnSpan: 1
+                        Layout.rowSpan: 1
+                        Layout.row: 1
+                        Layout.column: 1
+
+                        Button {
+                            anchors.fill: parent
+                            text: "Ok"
+                            onClicked: {
+                                popup.close()
+                                var count = bestellModel.rowCount()
+                                console.log(count)
+                                var i
+                                for (i = count-1; i >= 0; i--) {
+                                    console.log(i)
+                                    bestellModel.deleteProdukt(i)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -397,7 +567,7 @@ Pane {
                 color: "white"
 
                     Text {
-                        text: "Einkaufsliste kp"
+                        text: "Bestellung"
                         font.family: "fontawsome"
                         font.pointSize: 24
                         color: "black"

@@ -1,0 +1,22 @@
+{
+    "python.pythonPath": "venv/bin/python",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:BDM}/data/data.db",
+            "name": "data"
+        },
+        {
+            "previewLimit": 50,
+            "server": "ichschauserie.de",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "username": "student",
+            "name": "dvdi",
+            "database": "Schmalfuss",
+            "password": "M4isterL9hnguth"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

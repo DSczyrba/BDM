@@ -1,92 +1,61 @@
-import os, sqlite3 as sql
+from PyQt5.QtCore import QAbstractListModel, Qt, pyqtSignal, pyqtSlot, QModelIndex    
 
+class ArtikelModel(QAbstractListModel):
 
-class ArtikelModel:
-    def __init__(self):
-        self.user_db_file = f'{os.getcwd()}/data/data.db'
-        if os.path.exists(self.user_db_file):
-            pass
-        else:
-            sql_connection = sql.connect(self.user_db_file)
-            sql_cursor = sql_connection.cursor()
-            sql_create_user = "CREATE TABLE user(" \
-                            "name TEXT PRIMARY KEY, " \
-                            "picture TEXT, " \
-                            "member TINYINT, " \
-                            "konto DOUBLE, " \
-                            "active TINYINT);"
-            sql_create_article = "CREATE TABLE article(" \
-                                "name TEXT PRIMARY KEY , " \
-                                "picture TEXT, " \
-                                "is_kasten TINYINT, " \
-                                "besucher_preis DOUBLE, " \
-                                "mitglieder_preis DOUBLE, " \
-                                "bestand INTEGER, " \
-                                "active TINYINT);"
-            sql_cursor.execute(sql_create_article)
-            sql_cursor.execute(sql_create_user)
-            sql_connection.commit()
-            sql_connection.close()
-        self.db_connection = sql.connect(self.user_db_file)
-        self.db_cursor = self.db_connection.cursor()
+    NameRole = Qt.UserRole + 1
+    PreisRole = Qt.UserRole + 2
+    PortraitRole = Qt.UserRole + 3
 
-    def create_article(self, name, picture, mitglieder_preis, besucher_preis,
-                       is_kasten, kasten_size, active=1, bestand=0):
-        try:
-            self.db_cursor.execute(f"INSERT INTO article(name, picture, mitglieder_preis, "
-                                   f"besucher_preis, is_kasten, active, bestand, kasten_size) "
-                                   f"VALUES('{name}', '{picture}', {mitglieder_preis}, "
-                                   f"{besucher_preis}, {is_kasten}, {active}, {bestand}, {kasten_size});")
-            self.db_connection.commit()
-            return True
-        except sql.IntegrityError:
-            return False
+    produktChanged = pyqtSignal()
 
-    def edit_article(self, old_name, new_name, picture, mitglieder_preis, besucher_preis,
-                     is_kasten, active, bestand, kasten_size):
-        try:
-            self.db_cursor.execute(f"UPDATE article "
-                                   f"SET name='{new_name}', picture='{picture}', mitglieder_preis={mitglieder_preis}, "
-                                   f"besucher_preis={besucher_preis}, is_kasten={is_kasten}, "
-                                   f"bestand={bestand}, active={active}, kasten_size={kasten_size} "
-                                   f"WHERE name='{old_name}';")
-            self.db_connection.commit()
-            return True
-        except sql.IntegrityError:
-            return False
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.produkte = [
+            { 'name': "Eric", 'preis': 1.50, 'portrait': "src/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"}
+        ]
 
-    def delete_article(self, name):
-        try:
-            print(f"DELETE FROM user WHERE name='{name}';")
-            self.db_cursor.execute(f"DELETE FROM article WHERE name='{name}';")
-            self.db_connection.commit()
-            return True
-        except sql.IntegrityError:
-            return False
+    def data(self, index, role=Qt.DisplayRole):
+        row = index.row()
+        if role == ArtikelModel.NameRole:
+            return self.produkte[row]["name"]
+        if role == ArtikelModel.PreisRole:
+            return self.produkte[row]["preis"]
+        if role == ArtikelModel.PortraitRole:
+            return self.produkte[row]["portrait"]
 
-    def select_articles(self):
-        sql_query = self.db_cursor.execute(f"SELECT * FROM article;")
-        all_articles = []
-        for article in sql_query:
-            all_articles.append({"Name": article[0], "Bild": article[1], "Mitglieder_Preis": article[4],
-                                 "Besucher_Preis": article[3], "Ist_Kasten": article[2],
-                                 "Bestand": article[5], "Aktiv": article[6], "Kasten_Size": article[7]})
-        return all_articles
+    def rowCount(self, parent=QModelIndex()):
+        return len(self.produkte)
 
-    def update_bestand(self, name, bestand):
-        self.db_cursor.execute(f"UPDATE article "
-                               f"SET bestand={bestand} "
-                               f"WHERE name='{name}';")
-        self.db_connection.commit()
+    def roleNames(self):
+        return {
+            ArtikelModel.NameRole: b'name',
+            ArtikelModel.PreisRole: b'preis',
+            ArtikelModel.PortraitRole: b'portrait'
+        }
 
-    def close_db(self):
-        self.db_connection.close()
+    @pyqtSlot(str, str, str)
+    def addProdukt(self, name, preis, portrait):
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self.produkte.append({'name': name, 'preis': preis, 'portrait': portrait})
+        self.endInsertRows()
 
+    @pyqtSlot(int, str, str, str)
+    def editProdukt(self, row, name, preis, portrait):
+        ix = self.index(row, 0)
+        self.produkte[row] = {'name': name, 'preis': preis, 'portrait': portrait}
+        self.produktChanged.emit(ix, ix, self.roleNames())
 
-for line in ArtikelModel().select_articles():
-    print(line)
-
-ArtikelModel().update_bestand("Bier", 16)
-
-for line in ArtikelModel().select_articles():
-    print(line)
+    @pyqtSlot(int)
+    def deleteProdukt(self, row):
+        self.beginRemoveColumns(QModelIndex(), row, row)
+        del self.produkte[row]
+        self.endRemoveRows()

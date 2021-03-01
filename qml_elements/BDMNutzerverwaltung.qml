@@ -1,6 +1,8 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.3
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.0
 
 Pane {
     padding: 0
@@ -52,7 +54,7 @@ Pane {
             Layout.columnSpan: 3
             Layout.rowSpan: 1
             Layout.row: 0
-            Layout.column: 0    
+            Layout.column: 0
 
             Text {
                 id: headingNeu
@@ -91,14 +93,25 @@ Pane {
             }      
         }
 
-        Rectangle {          
-            color: "blue"        
+        Rectangle {               
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.columnSpan: 2
             Layout.rowSpan: 1
             Layout.row: 1
-            Layout.column: 1     
+            Layout.column: 1
+
+            TextField {
+                id: nameInput
+                placeholderText: "neuer Benutzer"
+                font.family: "fontawsome"
+                font.pointSize: 12
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: parent.width - 20
+                height: parent.height / 2
+                anchors.topMargin: parent.height/2 - (height / 2)                 
+            }   
         }
 
         Rectangle {                
@@ -123,14 +136,25 @@ Pane {
             }            
         }
 
-        Rectangle {          
-            color: "green"        
+        Rectangle {                
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.columnSpan: 2
             Layout.rowSpan: 1
             Layout.row: 2
-            Layout.column: 1         
+            Layout.column: 1
+
+            TextField {
+                id: kontoInput
+                placeholderText: "0,00€"
+                font.family: "fontawsome"
+                font.pointSize: 12
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: parent.width - 20
+                height: parent.height / 2
+                anchors.topMargin: parent.height/2 - (height / 2)                 
+            }         
         }
 
         Rectangle {                 
@@ -155,14 +179,66 @@ Pane {
             }     
         }
 
-        Rectangle {          
-            color: "red"        
+        Rectangle {               
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.columnSpan: 1
             Layout.rowSpan: 1
             Layout.row: 3
-            Layout.column: 1     
+            Layout.column: 1
+
+            TextField {
+                id: bildInput
+                placeholderText: "Bild auswählen"
+                font.family: "fontawsome"
+                font.pointSize: 12
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: 2 * parent.width / 3
+                height: parent.height / 2
+                anchors.topMargin: parent.height/2 - (height / 2) 
+            }
+
+            Rectangle {
+                id: bildBtn
+                color: '#d4d4d4'
+                anchors.left: bildInput.right
+                anchors.top: bildInput.top
+                height: bildInput.height
+                width: height
+
+                Image {                  
+                    anchors.verticalCenter: parent.verticalCenter                    
+                    anchors.horizontalCenter: parent.horizontalCenter                    
+                    width: parent.width - 20
+                    height: parent.height - 20
+                    source: 'src/baseline_perm_media_black_18dp.png'
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: { fileDialog.visible = true }
+                }
+
+                FileDialog {
+                    id: fileDialog
+                    title: "Please choose a file"
+                    folder: shortcuts.home
+                    onAccepted: {
+                        bestellungcontroller.copyImage(fileDialog.fileUrl)
+                        neuBenutzerIm.source = fileDialog.fileUrl
+                    }
+                }    
+            }
+
+            //     Image {
+            //         anchors.fill: parent
+            //         width: parent.width
+            //         height: parent.height
+            //         source: src/baseline_perm_media_black_18dp.png
+            //     }
+            //}
+             
         }
 
         Rectangle {          
@@ -172,7 +248,12 @@ Pane {
             Layout.columnSpan: 1
             Layout.rowSpan: 1
             Layout.row: 3
-            Layout.column: 2  
+            Layout.column: 2
+
+            Image {
+                id: neuBenutzerIm
+                anchors.fill: parent
+            }  
         }
 
         Rectangle {                
@@ -282,7 +363,11 @@ Pane {
 
             ComboBox {
                 id: name
-                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: parent.width - 20
+                height: parent.height / 2
+                anchors.topMargin: parent.height/2 - (height / 2)
                 editable: false
                 model: nutzerliste
 

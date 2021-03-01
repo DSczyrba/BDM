@@ -1,17 +1,22 @@
 from dao.nutzer_dao import NutzerDao
 from model.nutzer_model import NutzerModel
+from model.artikel_model import ArtikelModel
 from PyQt5.QtCore import *
+from shutil import copyfile
 
 class BestellungController(QObject):
 
     nutzerDatenAktualisiert = pyqtSignal(list)
     anzeigeDatenAktualiesieren = pyqtSignal(list)
     cbIndexAktualisieren = pyqtSignal(int)
+    productmodelAktualisiert = pyqtSignal(QAbstractListModel)
+    updateImage = pyqtSignal(str)
 
     def __init__(self):
         QObject.__init__(self)
         self._nutzermodel = NutzerModel()
         self._nutzerdao = NutzerDao()
+        self._artikelmodel = ArtikelModel()
 
     @pyqtSlot()
     def getUsers(self):
@@ -56,3 +61,7 @@ class BestellungController(QObject):
     @pyqtSlot(int)
     def updateCBIndex(self, index):
         self.cbIndexAktualisieren.emit(index)
+
+    @pyqtSlot(str)
+    def copyImage(self, path):
+        print('föuagkhsfg'+path)
