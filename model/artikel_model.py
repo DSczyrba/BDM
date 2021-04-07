@@ -11,16 +11,16 @@ class ArtikelModel(QAbstractListModel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.produkte = [
-            { 'name': "Eric", 'preis': 1.50, 'portrait': "src/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/beer-icon.png"}
+            { 'name': "Eric", 'preis': 1.50, 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
+            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"}
         ]
 
     def data(self, index, role=Qt.DisplayRole):

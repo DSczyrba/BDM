@@ -1,8 +1,8 @@
+import shutil
 from dao.nutzer_dao import NutzerDao
 from model.nutzer_model import NutzerModel
 from model.artikel_model import ArtikelModel
 from PyQt5.QtCore import *
-from shutil import copyfile
 
 class BestellungController(QObject):
 
@@ -12,9 +12,9 @@ class BestellungController(QObject):
     productmodelAktualisiert = pyqtSignal(QAbstractListModel)
     updateImage = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(self, nutzermodel):
         QObject.__init__(self)
-        self._nutzermodel = NutzerModel()
+        self._nutzermodel = nutzermodel
         self._nutzerdao = NutzerDao()
         self._artikelmodel = ArtikelModel()
 
@@ -43,25 +43,24 @@ class BestellungController(QObject):
 
     @pyqtSlot(int)
     def getCurrentCBData(self, currentIndex):
-        konto = self._nutzermodel._konto[currentIndex]
-        mitglied = self._nutzermodel._mitglied[currentIndex]
-        bild = f'src/{self._nutzermodel._bild[currentIndex]}'
+        try:
+            konto = self._nutzermodel._konto[currentIndex]
+            mitglied = self._nutzermodel._mitglied[currentIndex]
+            bild = f'src/{self._nutzermodel._bild[currentIndex]}'
+            print(konto)
+            konto = "{:,.2f}€".format(konto)
 
-        if konto == 0.0:
-            konto = '0.00'
-        else:
-            "${:,.2f}".format(konto)
-        if mitglied == 0:
-            mitglied = 'Besucher'
-        else:
-            mitglied = 'Vereinsmitglied'
+            if mitglied == 0:
+                mitglied = 'Besucher'
+            else:
+                mitglied = 'Vereinsmitglied'
 
-        self.anzeigeDatenAktualiesieren.emit([str(konto), str(mitglied), str(bild)])
+            self.anzeigeDatenAktualiesieren.emit([str(konto), str(mitglied), str(bild)])
+        except:
+            pass
 
     @pyqtSlot(int)
     def updateCBIndex(self, index):
         self.cbIndexAktualisieren.emit(index)
 
-    @pyqtSlot(str)
-    def copyImage(self, path):
-        print('föuagkhsfg'+path)
+    

@@ -24,6 +24,7 @@ class NutzerDao:
                                 "name TEXT PRIMARY KEY , " \
                                 "picture TEXT, " \
                                 "is_kasten TINYINT, " \
+                                "kasten_size INTEGER, " \
                                 "besucher_preis DOUBLE, " \
                                 "mitglieder_preis DOUBLE, " \
                                 "bestand INTEGER, " \
@@ -35,7 +36,7 @@ class NutzerDao:
         self.db_connection = sql.connect(self.user_db_file)
         self.db_cursor = self.db_connection.cursor()
 
-    def create_user(self, name, picture, member, active=1, konto=0.00):
+    def create_user(self, name, picture, member, konto=0.00, active=1):
         try:
             self.db_cursor.execute(f"INSERT INTO user(name, picture, member, konto, active) "
                                    f"VALUES('{name}', '{picture}', {member}, {konto}, {active});")
@@ -44,11 +45,11 @@ class NutzerDao:
         except sql.IntegrityError:
             return False
 
-    def edit_user(self, old_name, new_name, picture, member, active):
+    def edit_user(self, name, picture, member, konto):
         try:
             self.db_cursor.execute(f"UPDATE user "
-                                   f"SET name='{new_name}', picture='{picture}', member={member}, active={active} "
-                                   f"WHERE name='{old_name}';")
+                                   f"SET picture='{picture}', member={member}, konto={konto} "
+                                   f"WHERE name='{name}';")
             self.db_connection.commit()
             return True
         except sql.IntegrityError:

@@ -19,6 +19,7 @@ class ArtikelDao:
                                 "name TEXT PRIMARY KEY , " \
                                 "picture TEXT, " \
                                 "is_kasten TINYINT, " \
+                                "kasten_size INTEGER, " \
                                 "besucher_preis DOUBLE, " \
                                 "mitglieder_preis DOUBLE, " \
                                 "bestand INTEGER, " \
@@ -35,8 +36,8 @@ class ArtikelDao:
         try:
             self.db_cursor.execute(f"INSERT INTO article(name, picture, mitglieder_preis, "
                                    f"besucher_preis, is_kasten, active, bestand, kasten_size) "
-                                   f"VALUES('{name}', '{picture}', {mitglieder_preis}, "
-                                   f"{besucher_preis}, {is_kasten}, {active}, {bestand}, {kasten_size});")
+                                   f"VALUES('{name}', '{picture}', '{mitglieder_preis}', "
+                                   f"'{besucher_preis}', {is_kasten}, {active}, {bestand}, {kasten_size});")
             self.db_connection.commit()
             return True
         except sql.IntegrityError:
@@ -81,12 +82,3 @@ class ArtikelDao:
 
     def close_db(self):
         self.db_connection.close()
-
-
-for line in ArtikelModel().select_articles():
-    print(line)
-
-ArtikelModel().update_bestand("Bier", 16)
-
-for line in ArtikelModel().select_articles():
-    print(line)

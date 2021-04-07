@@ -9,11 +9,15 @@ Pane {
     background: Rectangle {
         anchors.fill: parent
         color: "white"
-        /*gradient: Gradient {
-            GradientStop { position: 0.0; color: '#D5D5D5'}
-            GradientStop { position: 1.0; color: '#CDCBCB'}
-        }*/
     }
+    Rectangle {
+            color: 'black'
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width/2-1
+            width: 3
+            height: parent.height - 50
+        }
 
     Connections {
         target: bestellungcontroller
@@ -23,7 +27,7 @@ Pane {
         }
         function onAnzeigeDatenAktualiesieren(userdata) {
             console.log('konto ', userdata[0], 'mitglied ', userdata[1], 'bild ', userdata[2]);
-            if (userdata[0] == '0.00') {
+            if (userdata[0] == '0.00€') {
                 txtKonto.color = 'red';
             }
             else {
@@ -46,7 +50,7 @@ Pane {
 
         Rectangle {
             Layout.fillHeight: true
-            Layout.minimumWidth: parent.width/1.8
+            Layout.preferredWidth: parent.width/2
             Layout.columnSpan: 1
             Layout.rowSpan: 6
             Layout.row: 0
@@ -78,6 +82,7 @@ Pane {
             GridView {
                 id: gridview
                 header: produktHeading
+                clip: true
                 anchors.fill: parent
                 cellWidth: parent.width / 3; cellHeight: parent.height / 3
                 model: produktModel
@@ -128,7 +133,6 @@ Pane {
         }
 
         Rectangle {
-            color: "blue"
             Layout.minimumHeight: parent.height/2
             Layout.fillWidth: true
             Layout.columnSpan: 2
@@ -144,29 +148,25 @@ Pane {
                 clip: true
                 model: bestellModel
                 header: kassenHeading
-                delegate: Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: name + "\t\t\t\t\t" + preis
-                    font.pointSize: 12
-                }
+                delegate: bestellungDelegate
 
-                Rectangle {
-                    anchors.fill: parent
-                    color: 'white'
-                    border.width: 0.1
-                    border.color: 'black'
-                    z: -1
-
-                    gradient: Gradient {
-                        GradientStop { position: 0.8; color: 'white'}
-                        GradientStop { position: 1.0; color: 'lightgrey'}
+                Component {
+                    id: bestellungDelegate
+                    Item {
+                        width: bestellListe.width; height: 20
+                        Grid {
+                            anchors.fill: parent
+                            columns: 2
+                            spacing: 2
+                            Text { id: pName; font.pointSize: 12; text: name; anchors.left: parent.left; anchors.leftMargin: 100; anchors.top: parent.top; anchors.topMargin: 5}
+                            Text { id: pPreis; font.pointSize: 12; text: preis; anchors.left: pName.left; anchors.leftMargin: bestellListe.width / 3 - width; anchors.top: parent.top; anchors.topMargin: 5}
+                            Button { anchors.left: pPreis.left; anchors.top: parent.top; height: 15; text: "Löschen"; anchors.leftMargin: bestellListe.width / 2 - width; anchors.topMargin: 5
+                                onClicked: {
+                                    bestellModel.deleteProdukt(model.index)
+                                }
+                            }
+                        }
                     }
-                    // ScrollView {
-                    //     anchors.fill: parent
-                    //     ScrollBar.vertical.interactive: true
-                    //     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                    //     ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-                    // }
                 }
             }
         }
@@ -374,13 +374,6 @@ Pane {
                             text: "Abbrechen"
                             onClicked: {
                                 popup1.close()
-                                var count = bestellModel.rowCount()
-                                console.log(count)
-                                var i
-                                for (i = count-1; i >= 0; i--) {
-                                    console.log(i)
-                                    bestellModel.deleteProdukt(i)
-                                }
                             }
                         }
                     }
@@ -398,14 +391,11 @@ Pane {
                             onClicked: {
                                 popup1.close()
                                 var count = bestellModel.rowCount()
-                                console.log(count)
                                 var i
                                 for (i = count-1; i >= 0; i--) {
-                                    console.log(i)
                                     bestellModel.deleteProdukt(i)
                                 }
                                 var konto = txtKonto.text.replace("Kontostand:", "")
-                                console.log(konto)
                                 var neuKonto = eval(konto - endsumme.text)
                                 txtKonto.text = 'Kontostand: ' + neuKonto
                                 endsumme.text = '0.00'
@@ -471,13 +461,6 @@ Pane {
                             text: "Abbrechen"
                             onClicked: {
                                 popup.close()
-                                var count = bestellModel.rowCount()
-                                console.log(count)
-                                var i
-                                for (i = count-1; i >= 0; i--) {
-                                    console.log(i)
-                                    bestellModel.deleteProdukt(i)
-                                }
                             }
                         }
                     }
@@ -495,12 +478,11 @@ Pane {
                             onClicked: {
                                 popup.close()
                                 var count = bestellModel.rowCount()
-                                console.log(count)
                                 var i
                                 for (i = count-1; i >= 0; i--) {
-                                    console.log(i)
                                     bestellModel.deleteProdukt(i)
                                 }
+                                endsumme.text = '0.00'
                             }
                         }
                     }
