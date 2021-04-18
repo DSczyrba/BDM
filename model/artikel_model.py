@@ -11,16 +11,7 @@ class ArtikelModel(QAbstractListModel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.produkte = [
-            { 'name': "Eric", 'preis': 1.50, 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Eric", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"},
-            { 'name': "Dominic", 'preis': "1.50€", 'portrait': "src/articles/beer-icon.png"}
+            
         ]
 
     def data(self, index, role=Qt.DisplayRole):
@@ -48,7 +39,7 @@ class ArtikelModel(QAbstractListModel):
         self.produkte.append({'name': name, 'preis': preis, 'portrait': portrait})
         self.endInsertRows()
 
-    @pyqtSlot(int, str, str, str)
+    @pyqtSlot(int, str, str)
     def editProdukt(self, row, name, preis, portrait):
         ix = self.index(row, 0)
         self.produkte[row] = {'name': name, 'preis': preis, 'portrait': portrait}

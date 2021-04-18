@@ -16,18 +16,22 @@ class ArtikelController(QObject):
         self._artikelmodel = artikelmodel
         self._artikeldao = ArtikelDao()
 
-    @pyqtSlot()
-    def getArtikel(self):
+    @pyqtSlot(str)
+    def getArtikel(self, mitglied):
         names = []
         bild = []
+        artikel = {'name': "", 'preis': 0, 'portrait': ""}
         artikel_data = self._artikeldao.select_articles()  #nutzerdaten aus db holen
         print(artikel_data)
+        while self._artikelmodel.rowCount() != 0:
+            self._artikelmodel.deleteProdukt(0)
         for i in range(len(artikel_data)):
-            names.append(artikel_data[i]['Name'])
-            bild.append(artikel_data[i]['Bild'])
-
-        self._artikelmodel._names = names
-        self._artikelmodel._bild = bild
+            if mitglied == 'Vereinsmitglied':
+                preis = "{:,.2f}€".format(artikel_data[i]['Mitglieder_Preis'])
+            else:
+                preis = "{:,.2f}€".format(artikel_data[i]['Besucher_Preis'])            
+            self._artikelmodel.addProdukt(artikel_data[i]['Name'], preis, artikel_data[i]['Bild'])
+        print(self._artikelmodel.produkte)
 
     @pyqtSlot(str)
     def copyImage(self, path):
@@ -54,4 +58,4 @@ class ArtikelController(QObject):
             member_preis = member_preis.replace(',', '.')
 
         print(f'{name}, {image[4:]}, {member_preis}, {preis}, {is_kasten}, {kasten_size}')
-        self._artikeldao.create_article(name, image[4:], member_preis, preis, is_kasten, kasten_size)
+        self._artikeldao.create_article(name, image, member_preis, preis, is_kasten, kasten_size)

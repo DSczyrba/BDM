@@ -44,7 +44,6 @@ class NutzerController(QObject):
     @pyqtSlot(int, str, str, bool)
     def updateUser(self, index, konto, image, member):
         name = self._nutzermodel.names[index]
-        print(f'{name}, {konto}, {image}, {member}')
         if member:
             member = 1
         else:

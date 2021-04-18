@@ -27,7 +27,7 @@ Pane {
         }
         function onAnzeigeDatenAktualiesieren(userdata) {
             console.log('konto ', userdata[0], 'mitglied ', userdata[1], 'bild ', userdata[2]);
-            if (userdata[0] == '0.00€') {
+            if ((userdata[0] == '0.00€') || (userdata[0].includes('-'))) {
                 txtKonto.color = 'red';
             }
             else {
@@ -36,6 +36,7 @@ Pane {
             txtKonto.text = 'Kontostand: ' + userdata[0];
             txtMitglied.text = userdata[1];
             profilbild.source = userdata[2];
+            artikelcontroller.getArtikel(userdata[1])
         }
         function onCbIndexAktualisieren(index) {
             nameCB.currentIndex = index;
@@ -64,7 +65,7 @@ Pane {
                         anchors.fill: parent
                         Image { id: pIm; source: portrait; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter}
                         Text { id: pName; text: name; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pIm.bottom }
-                        Text { text: preis; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pName.bottom}
+                        Text { id : pPreis; text: preis; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pName.bottom}
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
@@ -86,7 +87,11 @@ Pane {
                 anchors.fill: parent
                 cellWidth: parent.width / 3; cellHeight: parent.height / 3
                 model: produktModel
-                delegate: productDelegate          
+                delegate: productDelegate
+
+                Component.onCompleted: {
+                    //artikelcontroller.getArtikel()
+                }           
             }
 
 
@@ -163,6 +168,9 @@ Pane {
                             Button { anchors.left: pPreis.left; anchors.top: parent.top; height: 15; text: "Löschen"; anchors.leftMargin: bestellListe.width / 2 - width; anchors.topMargin: 5
                                 onClicked: {
                                     bestellModel.deleteProdukt(model.index)
+                                    var ProPreis = pPreis.text.replace("€", "")
+                                    var endSum = eval(endsumme.text - ProPreis)
+                                    endsumme.text = endSum
                                 }
                             }
                         }
@@ -396,9 +404,12 @@ Pane {
                                     bestellModel.deleteProdukt(i)
                                 }
                                 var konto = txtKonto.text.replace("Kontostand:", "")
+                                konto = konto.replace("€", "")
                                 var neuKonto = eval(konto - endsumme.text)
-                                txtKonto.text = 'Kontostand: ' + neuKonto
                                 endsumme.text = '0.00'
+                                bestellungcontroller.pay(nameCB.currentIndex, neuKonto)
+                                bestellungcontroller.getUsers()
+                                bestellungcontroller.getCurrentCBData(nameCB.currentIndex)
                             }
                         }
                     }
@@ -477,6 +488,7 @@ Pane {
                             text: "Ok"
                             onClicked: {
                                 popup.close()
+                                bestellungcontroller.payBar(endsumme.text)
                                 var count = bestellModel.rowCount()
                                 var i
                                 for (i = count-1; i >= 0; i--) {

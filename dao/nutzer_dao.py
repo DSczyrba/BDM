@@ -73,9 +73,7 @@ class NutzerDao:
         return all_users
 
     def transaction(self, name, konto):
-        self.db_cursor.execute(f"UPDATE user "
-                               f"SET konto={konto}"
-                               f"WHERE name={name};")
+        self.db_cursor.execute(f"UPDATE user SET konto={konto} WHERE name='{name}';")
         self.db_connection.commit()
 
     def close_db(self):

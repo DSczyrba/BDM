@@ -69,9 +69,9 @@ class ArtikelDao:
         sql_query = self.db_cursor.execute(f"SELECT * FROM article;")
         all_articles = []
         for article in sql_query:
-            all_articles.append({"Name": article[0], "Bild": article[1], "Mitglieder_Preis": article[4],
-                                 "Besucher_Preis": article[3], "Ist_Kasten": article[2],
-                                 "Bestand": article[5], "Aktiv": article[6], "Kasten_Size": article[7]})
+            all_articles.append({"Name": article[0], "Bild": article[1], "Mitglieder_Preis": article[5],
+                                 "Besucher_Preis": article[4], "Ist_Kasten": article[2],
+                                 "Bestand": article[6], "Aktiv": article[7], "Kasten_Size": article[3]})
         return all_articles
 
     def update_bestand(self, name, bestand):

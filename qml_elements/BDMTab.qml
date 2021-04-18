@@ -39,6 +39,8 @@ Pane {
             }
 
             onClicked: {
+                bestellungcontroller.getUsers()
+                kassencontroller.getUsers()
                 bestellungcontroller.getCurrentCBData(0);
                 bestellungcontroller.updateCBIndex(0);
             }
@@ -48,7 +50,7 @@ Pane {
             id: kassenzettel
 
             contentItem: Text {
-                text: "Kassenzettel"
+                text: "Kasse"
                 font.pointSize: kassenzettel.checked ? 16:14
                 font.family: "fontawsome"
                 horizontalAlignment: Text.AlignHCenter
@@ -59,6 +61,13 @@ Pane {
             background: Rectangle {
                 color: kassenzettel.checked ? "#dcdcdc" : "#f8f8ff"
                 opacity: enabled ? 1 : 0.3
+            }
+            onClicked: {
+                kassencontroller.getUsers()
+                kassencontroller.getKasse()
+                bestellungcontroller.getUsers()
+                bestellungcontroller.getCurrentCBData(0);
+                bestellungcontroller.updateCBIndex(0);
             }
         }
 
@@ -98,6 +107,7 @@ Pane {
             }
 
             onClicked: {
+                bestellungcontroller.getUsers()
                 bestellungcontroller.getCurrentCBData(0);
                 bestellungcontroller.updateCBIndex(0);
             }

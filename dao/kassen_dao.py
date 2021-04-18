@@ -54,21 +54,3 @@ class KassenDao:
 
     def close_db(self):
         self.db_connection.close()
-
-
-
-#one_user = NutzerModel()
-#if not one_user.create_user("Eric", "Bild", "1"):
-#    print("Der Nutzer existiert bereits!")
-
-#if not one_user.edit_user("Ficken", "Eric", "Bild2", "1", "1"):
-#    print("Der Nutzer konnte nicht bearbeitet werden!")
-
-#if not one_user.delete_user("Eric"):
-#    print("Nutzer konnte nicht gelöscht werden!")
-
-
-#test = one_user.select_users()
-#for line in test:
-#    print(line)
-#one_user.close_db()
