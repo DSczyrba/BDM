@@ -44,7 +44,7 @@ class ArtikelDao:
             return False
 
     def edit_article(self, old_name, new_name, picture, mitglieder_preis, besucher_preis,
-                     is_kasten, active, bestand, kasten_size):
+                     is_kasten, bestand, kasten_size, active=1):
         try:
             self.db_cursor.execute(f"UPDATE article "
                                    f"SET name='{new_name}', picture='{picture}', mitglieder_preis={mitglieder_preis}, "
@@ -58,7 +58,7 @@ class ArtikelDao:
 
     def delete_article(self, name):
         try:
-            print(f"DELETE FROM user WHERE name='{name}';")
+            print(f"DELETE FROM article WHERE name='{name}';")
             self.db_cursor.execute(f"DELETE FROM article WHERE name='{name}';")
             self.db_connection.commit()
             return True
@@ -67,6 +67,15 @@ class ArtikelDao:
 
     def select_articles(self):
         sql_query = self.db_cursor.execute(f"SELECT * FROM article;")
+        all_articles = []
+        for article in sql_query:
+            all_articles.append({"Name": article[0], "Bild": article[1], "Mitglieder_Preis": article[5],
+                                 "Besucher_Preis": article[4], "Ist_Kasten": article[2],
+                                 "Bestand": article[6], "Aktiv": article[7], "Kasten_Size": article[3]})
+        return all_articles
+    
+    def select_article(self, name):
+        sql_query = self.db_cursor.execute(f"SELECT * FROM article WHERE name = '{name}';")
         all_articles = []
         for article in sql_query:
             all_articles.append({"Name": article[0], "Bild": article[1], "Mitglieder_Preis": article[5],

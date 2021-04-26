@@ -11,16 +11,14 @@ class ArtikelController(QObject):
     cbIndexAktualisieren = pyqtSignal(int)
     imPathAktualisiert = pyqtSignal(str)
 
-    def __init__(self, artikelmodel):
+    def __init__(self, artikelmodel, artikelbmodel):
         QObject.__init__(self)
         self._artikelmodel = artikelmodel
+        self._artikelbmodel = artikelbmodel
         self._artikeldao = ArtikelDao()
 
     @pyqtSlot(str)
     def getArtikel(self, mitglied):
-        names = []
-        bild = []
-        artikel = {'name': "", 'preis': 0, 'portrait': ""}
         artikel_data = self._artikeldao.select_articles()  #nutzerdaten aus db holen
         print(artikel_data)
         while self._artikelmodel.rowCount() != 0:
@@ -31,7 +29,20 @@ class ArtikelController(QObject):
             else:
                 preis = "{:,.2f}€".format(artikel_data[i]['Besucher_Preis'])            
             self._artikelmodel.addProdukt(artikel_data[i]['Name'], preis, artikel_data[i]['Bild'])
-        print(self._artikelmodel.produkte)
+
+    @pyqtSlot()
+    def getArtikelB(self):
+        names = []
+        bild = []
+        artikel = {'name': "", 'preis': 0, 'portrait': ""}
+        artikel_data = self._artikeldao.select_articles()  #nutzerdaten aus db holen
+        print(artikel_data)
+        while self._artikelbmodel.rowCount() != 0:
+            self._artikelbmodel.deleteProdukt(0)
+        for i in range(len(artikel_data)):
+            mpreis = "{:,.2f}€".format(artikel_data[i]['Mitglieder_Preis'])
+            preis = "{:,.2f}€".format(artikel_data[i]['Besucher_Preis'])            
+            self._artikelbmodel.addProdukt(artikel_data[i]['Name'], preis, mpreis, artikel_data[i]['Bild'], artikel_data[i]['Bestand'])
 
     @pyqtSlot(str)
     def copyImage(self, path):
@@ -59,3 +70,21 @@ class ArtikelController(QObject):
 
         print(f'{name}, {image[4:]}, {member_preis}, {preis}, {is_kasten}, {kasten_size}')
         self._artikeldao.create_article(name, image, member_preis, preis, is_kasten, kasten_size)
+
+    @pyqtSlot(str, str, str, str)
+    def updateArtikel(self, name, preis, mpreis, bestand):
+        artikel = self._artikeldao.select_article(name)
+        artikel = artikel[0]
+        if '€' in preis:
+            preis = preis.replace('€', '')
+        if ',' in preis:
+            preis = preis.replace(',', '.')
+        if '€' in mpreis:
+            mpreis = mpreis.replace('€', '')
+        if ',' in mpreis:
+            mpreis = mpreis.replace(',', '.')
+        self._artikeldao.edit_article(name, name, artikel['Bild'], mpreis, preis, artikel['Ist_Kasten'], bestand, artikel['Kasten_Size'])
+
+    @pyqtSlot(str)
+    def deleteArtikel(self, name):
+        self._artikeldao.delete_article(name)

@@ -101,7 +101,7 @@ Pane {
             Layout.column: 1
 
             TextField {
-                id: kontoInputBen
+                id: verwendung
                 font.family: "fontawsome"
                 font.pointSize: 12
                 anchors.top: parent.top
@@ -225,6 +225,11 @@ Pane {
                 width: parent.width - 30
                 height: parent.height - (parent.height*0.35)
                 text: "Zurücksetzen"
+
+                onClicked: {
+                    kostenInput.text = ''
+                    verwendung.text = ''
+                }
             }
         }
 
@@ -242,6 +247,77 @@ Pane {
                 width: parent.width - 20
                 height: parent.height - (parent.height*0.35)
                 text: "Speichern"
+
+                onClicked: {
+                    popup1.open()
+                }
+            }
+        }
+
+        Popup {
+            id: popup1
+
+            parent: Overlay.overlay
+
+            x: Math.round((parent.width - width) / 2)
+            y: Math.round((parent.height - height) / 2)
+            width: 500
+            height: 100
+
+            GridLayout {
+                anchors.fill: parent
+                rows: 2
+                columns: 2
+
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.columnSpan: 2
+                    Layout.rowSpan: 1
+                    Layout.row: 0
+                    Layout.column: 0
+
+                    Text {text: "Soll das so abgerechnet werden?"}
+                }
+
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.columnSpan: 1
+                    Layout.rowSpan: 1
+                    Layout.row: 1
+                    Layout.column: 0
+
+                    Button {
+                        anchors.fill: parent
+                        text: "Abbrechen"
+                        onClicked: {
+                            popup1.close()
+                        }
+                    }
+                }
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.columnSpan: 1
+                    Layout.rowSpan: 1
+                    Layout.row: 1
+                    Layout.column: 1
+
+                    Button {
+                        anchors.fill: parent
+                        text: "Ok"
+                        onClicked: {
+                            popup1.close()
+                            console.log(verwendung.text, kostenInput.text, nameCB.currentIndex)
+                            kassencontroller.abrechnen(verwendung.text, kostenInput.text, nameCB.currentText, nameCB.currentIndex)
+                            kassencontroller.getKasse()
+                            kassencontroller.getUsers()
+                            kostenInput.text = ''
+                            verwendung.text = ''
+                        }
+                    }
+                }
             }
         }
 

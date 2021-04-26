@@ -43,6 +43,20 @@ Pane {
         }
     }
 
+    Connections {
+        target: artikelcontroller
+
+        function onAktualisierePreis(data) {
+
+            if (data[2] == 'Vereinsmitglied') {
+                pPreis.text = data[1]
+            }
+            else {
+                pPreis.text = data[0]
+            }
+        }
+    }
+
     GridLayout {
         id: grid
         anchors.fill: parent
@@ -69,10 +83,10 @@ Pane {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                console.log('moin', model.name, model.preis)
                                 bestellModel.addProdukt(model.name, model.preis)
                                 var fEndsumme = endsumme.text.replace('€', '')
                                 var summe = parseFloat(fEndsumme) + parseFloat(model.preis)
+                                summe = summe.toFixed(2)
                                 endsumme.text = summe
                             }
                         }
@@ -170,7 +184,7 @@ Pane {
                                     bestellModel.deleteProdukt(model.index)
                                     var ProPreis = pPreis.text.replace("€", "")
                                     var endSum = eval(endsumme.text - ProPreis)
-                                    endsumme.text = endSum
+                                    endsumme.text = endSum.toFixed(2)
                                 }
                             }
                         }
@@ -406,8 +420,8 @@ Pane {
                                 var konto = txtKonto.text.replace("Kontostand:", "")
                                 konto = konto.replace("€", "")
                                 var neuKonto = eval(konto - endsumme.text)
+                                bestellungcontroller.pay(nameCB.currentIndex, neuKonto, endsumme.text)
                                 endsumme.text = '0.00'
-                                bestellungcontroller.pay(nameCB.currentIndex, neuKonto)
                                 bestellungcontroller.getUsers()
                                 bestellungcontroller.getCurrentCBData(nameCB.currentIndex)
                             }

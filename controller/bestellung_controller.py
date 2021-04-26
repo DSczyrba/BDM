@@ -1,4 +1,5 @@
 import shutil
+import logging
 from dao.nutzer_dao import NutzerDao
 from dao.kassen_dao import KassenDao
 from model.nutzer_model import NutzerModel, NutzerKassenModel
@@ -60,22 +61,23 @@ class BestellungController(QObject):
     def updateCBIndex(self, index):
         self.cbIndexAktualisieren.emit(index)
 
-    @pyqtSlot(int, float)
-    def pay(self, index, konto):
-        print(self._nutzermodel._names[index], self._nutzermodel._bild[index], self._nutzermodel._mitglied[index], konto)
+    @pyqtSlot(int, float, str)
+    def pay(self, index, konto, geld):
         self._nutzerdao.edit_user(self._nutzermodel._names[index], self._nutzermodel._bild[index], self._nutzermodel._mitglied[index], konto)
         konto = "{:,.2f}€".format(konto)
+        logging.warning(f'Listenzahlung von: {self._nutzermodel._names[index]} Betrag: {geld}')
         self._nutzermodel._konto[index] = konto
         self._nutzerkassenmodel.editNutzer(index, self._nutzermodel._names[index], konto, self._nutzermodel._mitglied[index],self._nutzermodel._bild[index])
 
     @pyqtSlot(str)
     def payBar(self, geld):
         kasse = self._kassendao.select_geld()
+        logging.warning(f'Barzahlung von: - Betrag: {geld}')
         if '€' in geld:
             geld = geld.replace('€', '')
         if ',' in geld:
             geld = geld.replace(',', '.')
-        neuKasse = float(kasse) + float(geld)
+        neuKasse = "{:10.2f}".format(float(kasse) + float(geld))
         self._kassendao.edit_geld(neuKasse)
 
 

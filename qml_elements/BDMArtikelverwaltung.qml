@@ -394,6 +394,14 @@ Pane {
                 width: parent.width - 20
                 height: parent.height - (parent.height*0.35)
                 text: "Zurücksetzen"
+                onClicked: {
+                    nameInput.text = ""
+                    preisInput.text = ""
+                    mitgliedPreisInput.text = ""
+                    jaRb.checked = true
+                    kastenSize.text = ""
+                    bildInput.text = ""
+                }
             }
         }
 
@@ -441,7 +449,7 @@ Pane {
                         Layout.row: 0
                         Layout.column: 0
 
-                        Text {text: "Neuen Benutzer anlegen?"}
+                        Text {text: "Neues Produkt anlegen?"}
                     }
 
                     Rectangle {
@@ -476,6 +484,12 @@ Pane {
                                 popup1.close()
                                 artikelcontroller.addArticle(nameInput.text, preisInput.text, mitgliedPreisInput.text, jaRb.checked, kastenSize.text, bildInput.text)
                                 bestellungcontroller.getUsers()
+                                nameInput.text = ""
+                                preisInput.text = ""
+                                mitgliedPreisInput.text = ""
+                                jaRb.checked = true
+                                kastenSize.text = ""
+                                bildInput.text = ""
                             }
                         }
                     }
@@ -545,13 +559,27 @@ Pane {
                         spacing: 2
                         Image { id: pIm; source: portrait; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: parent.top; anchors.topMargin: width/2}
                         Text { id: pName; font.pointSize: 12; text: 'Name'; anchors.left: parent.left; anchors.leftMargin: 40; anchors.top: pIm.bottom; anchors.topMargin: 10}
-                        TextField { id: tfName; font.pointSize: 12; text: name; cursorVisible: false; anchors.right: parent.right; anchors.top: pIm.bottom; anchors.rightMargin: 10}
+                        TextField { id: tfName; font.pointSize: 12; text: name; readOnly: true; cursorVisible: false; anchors.right: parent.right; anchors.top: pIm.bottom; anchors.rightMargin: 10}
                         Text { id: pPreis; font.pointSize: 12; text: 'Preis'; anchors.left: parent.left; anchors.leftMargin: 40; anchors.top: pName.bottom; anchors.topMargin: 40}
-                        TextField { text: preis; font.pointSize: 12; cursorVisible: false; anchors.right: parent.right; anchors.top: pName.bottom; anchors.rightMargin: 10; anchors.topMargin: 30}
+                        TextField { id: tfPreis; text: preis; font.pointSize: 12; cursorVisible: false; anchors.right: parent.right; anchors.top: pName.bottom; anchors.rightMargin: 10; anchors.topMargin: 30}
                         Text { id: pMPreis; font.pointSize: 12; text: 'Mit.-Preis'; anchors.left: parent.left; anchors.leftMargin: 40; anchors.top: pPreis.bottom; anchors.topMargin: 40}
-                        TextField { text: preis; font.pointSize: 12; cursorVisible: false; anchors.right: parent.right; anchors.top: pPreis.bottom; anchors.rightMargin: 10; anchors.topMargin: 30}
+                        TextField {id: tfMPreis; text: mpreis; font.pointSize: 12; cursorVisible: false; anchors.right: parent.right; anchors.top: pPreis.bottom; anchors.rightMargin: 10; anchors.topMargin: 30}
                         Text { id: pBestand; font.pointSize: 12; text: 'Bestand'; anchors.left: parent.left; anchors.leftMargin: 40; anchors.top: pMPreis.bottom; anchors.topMargin: 40}
-                        TextField { text: preis; font.pointSize: 12; cursorVisible: false; anchors.right: parent.right; anchors.top: pMPreis.bottom; anchors.rightMargin: 10; anchors.topMargin: 30}
+                        TextField { id: tfBestand; text: bestand; font.pointSize: 12; cursorVisible: false; anchors.right: parent.right; anchors.top: pMPreis.bottom; anchors.rightMargin: 10; anchors.topMargin: 30}
+                        Button { id: pBeatbeiten; text: 'Bearbeiten'; anchors.left: parent.left; anchors.leftMargin: 40; anchors.top: tfBestand.bottom; anchors.topMargin: 20; width: parent.width / 2- 50
+                            onClicked: {
+                                artikelcontroller.updateArtikel(tfName.text, tfPreis.text, tfMPreis.text, tfBestand.text);
+                                artikelcontroller.getArtikel();
+                                artikelcontroller.getArtikelB();
+                            }
+                        }
+                        Button { id: pLoeschen; text: 'Löschen'; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: tfBestand.bottom; anchors.topMargin: 20; width: parent.width / 2 - 50
+                            onClicked: {
+                                artikelcontroller.deleteArtikel(tfName.text);
+                                artikelcontroller.getArtikel();
+                                artikelcontroller.getArtikelB();
+                            }
+                        }
                     }
                 }
             }
@@ -562,8 +590,8 @@ Pane {
                 header: produktHeading
                 anchors.fill: parent
                 cellWidth: parent.width / 2
-                cellHeight: parent.height / 2
-                model: produktModel
+                cellHeight: parent.height / 1.8
+                model: artikelmodel
                 delegate: contactDelegate
             }
         }

@@ -87,6 +87,9 @@ Pane {
                 color: historie.checked ? "#dcdcdc" : "#f8f8ff"
                 opacity: enabled ? 1 : 0.3
             }
+            onClicked: {
+                historiecontroller.loadTableData();
+            }
         }
 
         TabButton {
@@ -128,6 +131,10 @@ Pane {
             background: Rectangle {
                 color: artikelverwaltung.checked ? "#dcdcdc" : "#f8f8ff"
                 opacity: enabled ? 1 : 0.3
+            }
+
+            onClicked: {
+                artikelcontroller.getArtikelB();
             }
         }
     }
