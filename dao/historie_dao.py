@@ -1,14 +1,9 @@
-import os, sys, sqlite3 as sql
-from PyQt5 import QtQml
-from PyQt5.QtCore import *
+import os, sqlite3 as sql
 
 
-class NutzerDao:
-
+class HistorieDao:
     def __init__(self):
-        #self.m_engine = engine
         self.user_db_file = f'{os.getcwd()}/data/data.db'
-        self.signalName = pyqtSignal(str, arguments=["print"])
         if os.path.exists(self.user_db_file):
             pass
         else:
@@ -48,63 +43,27 @@ class NutzerDao:
         self.db_connection = sql.connect(self.user_db_file)
         self.db_cursor = self.db_connection.cursor()
 
-    def create_user(self, name, picture, member, konto=0.00, active=1):
+    def create_content(self, date, kategory, name, amount):
         try:
-            self.db_cursor.execute(f"INSERT INTO user(name, picture, member, konto, active) "
-                                   f"VALUES('{name}', '{picture}', {member}, {konto}, {active});")
+            self.db_cursor.execute(f"INSERT INTO history(date, kategory, "
+                                   f"name, amount) "
+                                   f"VALUES('{date}', '{kategory}', '{name}', {amount});")
+            self.db_connection.commit()
+            return True
+        except sql.IntegrityError:
+            return False
+    
+    def delete_content(self, date):
+        try:
+            self.db_cursor.execute(f"DELETE FROM history WHERE date='{date}';")
             self.db_connection.commit()
             return True
         except sql.IntegrityError:
             return False
 
-    def edit_user(self, name, picture, member, konto):
-        try:
-            self.db_cursor.execute(f"UPDATE user "
-                                   f"SET picture='{picture}', member={member}, konto={konto} "
-                                   f"WHERE name='{name}';")
-            self.db_connection.commit()
-            return True
-        except sql.IntegrityError:
-            return False
-
-    def delete_user(self, name):
-        try:
-            print(f"DELETE FROM user WHERE name='{name}';")
-            self.db_cursor.execute(f"DELETE FROM user WHERE name='{name}';")
-            self.db_connection.commit()
-            return True
-        except sql.IntegrityError:
-            return False
-
-    def select_users(self):
-        sql_query = self.db_cursor.execute(f"SELECT * FROM user;")
-        all_users = []
-        for user in sql_query:
-            all_users.append({"Name": user[0], "Bild": user[1], "Konto": user[3],
-                              "Verein": user[2], "Aktiv": user[4]})
-        return all_users
-
-    def transaction(self, name, konto):
-        self.db_cursor.execute(f"UPDATE user SET konto={konto} WHERE name='{name}';")
-        self.db_connection.commit()
-
-    def close_db(self):
-        self.db_connection.close()
-
-
-
-#one_user = NutzerModel()
-#if not one_user.create_user("Eric", "Bild", "1"):
-#    print("Der Nutzer existiert bereits!")
-
-#if not one_user.edit_user("Ficken", "Eric", "Bild2", "1", "1"):
-#    print("Der Nutzer konnte nicht bearbeitet werden!")
-
-#if not one_user.delete_user("Eric"):
-#    print("Nutzer konnte nicht gelöscht werden!")
-
-
-#test = one_user.select_users()
-#for line in test:
-#    print(line)
-#one_user.close_db()
+    def select_content(self):
+        sql_query = self.db_cursor.execute(f"SELECT * FROM history;")
+        contents = []
+        for content in sql_query:
+            contents.append({"Datum": content[0], "Kategorie": content[1], "Name": content[2], "Betrag": content[3]})
+        return contents

@@ -29,9 +29,19 @@ class KassenDao:
                                 "mitglieder_preis DOUBLE, " \
                                 "bestand INTEGER, " \
                                 "active TINYINT);"
-            sql_create_kasse = "CREATE TABLE kasse(geld FLOAT PRIMARY KEY);"
+            sql_create_history = "create table history(" \
+                                "date varchar constraint history_pk primary key, " \
+                                "kategory varchar not null, " \
+                                "name     varchar not null, " \
+                                "amount   float   not null);"
+            sql_create_kasse = "create table history( " \
+                            "date varchar constraint history_pk primary key, " \
+                            "kategory varchar not null, " \
+                            "name     varchar not null, " \
+                            "amount   float   not null);"
             sql_cursor.execute(sql_create_article)
             sql_cursor.execute(sql_create_user)
+            sql_cursor.execute(sql_create_history)
             sql_cursor.execute(sql_create_kasse)
             sql_connection.commit()
             sql_connection.close()

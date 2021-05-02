@@ -5,6 +5,7 @@ class ArtikelModel(QAbstractListModel):
     NameRole = Qt.UserRole + 1
     PreisRole = Qt.UserRole + 2
     PortraitRole = Qt.UserRole + 3
+    BestandRole = Qt.UserRole + 4
 
     produktChanged = pyqtSignal()
 
@@ -22,6 +23,8 @@ class ArtikelModel(QAbstractListModel):
             return self.produkte[row]["preis"]
         if role == ArtikelModel.PortraitRole:
             return self.produkte[row]["portrait"]
+        if role == ArtikelModel.BestandRole:
+            return self.produkte[row]["bestand"]
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.produkte)
@@ -30,19 +33,20 @@ class ArtikelModel(QAbstractListModel):
         return {
             ArtikelModel.NameRole: b'name',
             ArtikelModel.PreisRole: b'preis',
-            ArtikelModel.PortraitRole: b'portrait'
+            ArtikelModel.PortraitRole: b'portrait',
+            ArtikelModel.BestandRole: b'bestand'
         }
 
     @pyqtSlot(str, str, str)
-    def addProdukt(self, name, preis, portrait):
+    def addProdukt(self, name, preis, portrait, bestand):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self.produkte.append({'name': name, 'preis': preis, 'portrait': portrait})
+        self.produkte.append({'name': name, 'preis': preis, 'portrait': portrait, 'bestand': bestand})
         self.endInsertRows()
 
     @pyqtSlot(int, str, str)
-    def editProdukt(self, row, name, preis, portrait):
+    def editProdukt(self, row, name, preis, portrait, bestand):
         ix = self.index(row, 0)
-        self.produkte[row] = {'name': name, 'preis': preis, 'portrait': portrait}
+        self.produkte[row] = {'name': name, 'preis': preis, 'portrait': portrait, 'bestand': bestand}
         self.produktChanged.emit(ix, ix, self.roleNames())
 
     @pyqtSlot(int)

@@ -2,8 +2,10 @@ from dao.nutzer_dao import NutzerDao
 from model.nutzer_model import NutzerKassenModel
 from PyQt5.QtCore import *
 from dao.kassen_dao import KassenDao
+from dao.historie_dao import HistorieDao
 import locale
 import logging
+from datetime import datetime
 
 class KassenController(QObject):
 
@@ -15,6 +17,7 @@ class KassenController(QObject):
         self._nutzermodel = nutzermodel
         self._nutzerdao = NutzerDao()
         self._kassendao = KassenDao()
+        self._historiedao = HistorieDao()
 
     @pyqtSlot()
     def getUsers(self):
@@ -35,7 +38,11 @@ class KassenController(QObject):
             kasse = kasse.replace('€', '')
         if ',' in kasse:
             kasse = kasse.replace(',', '.')
-        logging.warning(f'Einzahlung  von: {name} Betrag: {geld}')
+
+        now = datetime.now()
+        date = now.strftime("%d/%m/%Y %H:%M:%S")
+        self._historiedao.create_content(date, 'Einzahlung', name, geld)
+        #logging.warning(f'Einzahlung  von: {name} Betrag: {geld}')
         neuKasse = "{:10.2f}".format(float(kasse) + float(geld))
         konto = konto.replace('Kontostand:', '')
         neuKonto = "{:10.2f}".format(float(konto) + float(geld))
@@ -46,7 +53,7 @@ class KassenController(QObject):
     @pyqtSlot()
     def getKasse(self):
         geld = self._kassendao.select_geld()
-        geld = "{:,.2f}€".format(geld)
+        geld = "{:.2f}€".format(geld)
         self.kasseAktualisieren.emit(geld)
     
     @pyqtSlot(str, str, str, int)
@@ -56,15 +63,18 @@ class KassenController(QObject):
         if ',' in geld:
             geld = geld.replace(',', '.')
 
-        logging.warning(f'Kassenabrechnung Verwendung: {verwendung} von: {name} Betrag: {geld}')
-
-        if name == 'Kasse':
+        now = datetime.now()
+        date = now.strftime("%d/%m/%Y %H:%M:%S")
+        self._historiedao.create_content(date, f'Kassenabrechnung Verwendung: {verwendung}', name, geld)
+        #logging.warning(f'Kassenabrechnung Verwendung: {verwendung} von: {name} Betrag: {geld}')
+        
+        if name in 'Kasse':
             kasse = self._kassendao.select_geld()
-            kasse = float(kasse) - float(geld)
+            kasse = "{:10.2f}".format(float(kasse) - float(geld))
             self._kassendao.edit_geld(kasse)
         else:
             konto = self._nutzermodel._konto[currentIndex]
-            konto = float(konto) + float(geld)
+            konto = "{:10.2f}".format(float(konto) + float(geld))
             bild = self._nutzermodel._bild[currentIndex]
             mitglied = self._nutzermodel._mitglied[currentIndex]
             self._nutzerdao.edit_user(name, bild, mitglied, float(konto))

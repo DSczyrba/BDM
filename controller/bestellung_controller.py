@@ -1,7 +1,10 @@
 import shutil
 import logging
+from datetime import datetime
 from dao.nutzer_dao import NutzerDao
 from dao.kassen_dao import KassenDao
+from dao.historie_dao import HistorieDao
+from dao.artikel_dao import ArtikelDao
 from model.nutzer_model import NutzerModel, NutzerKassenModel
 from model.artikel_model import ArtikelModel
 from PyQt5.QtCore import *
@@ -21,6 +24,8 @@ class BestellungController(QObject):
         self._nutzerdao = NutzerDao()
         self._artikelmodel = ArtikelModel()
         self._kassendao = KassenDao()
+        self._historiedao = HistorieDao()
+        self._artikeldao = ArtikelDao()
 
     @pyqtSlot()
     def getUsers(self):
@@ -46,7 +51,7 @@ class BestellungController(QObject):
             konto = self._nutzermodel._konto[currentIndex]
             mitglied = self._nutzermodel._mitglied[currentIndex]
             bild = f'src/{self._nutzermodel._bild[currentIndex]}'
-            konto = "{:,.2f}€".format(konto)
+            konto = "{:.2f}€".format(konto)
 
             if mitglied == 0:
                 mitglied = 'Besucher'
@@ -64,15 +69,25 @@ class BestellungController(QObject):
     @pyqtSlot(int, float, str)
     def pay(self, index, konto, geld):
         self._nutzerdao.edit_user(self._nutzermodel._names[index], self._nutzermodel._bild[index], self._nutzermodel._mitglied[index], konto)
-        konto = "{:,.2f}€".format(konto)
-        logging.warning(f'Listenzahlung von: {self._nutzermodel._names[index]} Betrag: {geld}')
+        konto = "{:.2f}€".format(konto)
+
+        now = datetime.now()
+        date = now.strftime("%d/%m/%Y %H:%M:%S")
+        self._historiedao.create_content(date, 'Listenzahlung', self._nutzermodel._names[index], geld)
+        #logging.warning(f'Listenzahlung von: {self._nutzermodel._names[index]} Betrag: {geld}')
+
         self._nutzermodel._konto[index] = konto
         self._nutzerkassenmodel.editNutzer(index, self._nutzermodel._names[index], konto, self._nutzermodel._mitglied[index],self._nutzermodel._bild[index])
 
     @pyqtSlot(str)
     def payBar(self, geld):
         kasse = self._kassendao.select_geld()
-        logging.warning(f'Barzahlung von: - Betrag: {geld}')
+                
+        now = datetime.now()
+        date = now.strftime("%d/%m/%Y %H:%M:%S")
+        self._historiedao.create_content(date, 'Barzahlung', '-', geld)
+        #logging.warning(f'Barzahlung von: - Betrag: {geld}')
+
         if '€' in geld:
             geld = geld.replace('€', '')
         if ',' in geld:
@@ -80,5 +95,14 @@ class BestellungController(QObject):
         neuKasse = "{:10.2f}".format(float(kasse) + float(geld))
         self._kassendao.edit_geld(neuKasse)
 
+    @pyqtSlot(int, str)
+    def updateBestand(self, bestand, artikel):
+        product = self._artikeldao.select_article(artikel)
+        self._artikeldao.edit_article(artikel, artikel, product[0]['Bild'], product[0]['Mitglieder_Preis'], product[0]['Besucher_Preis'], product[0]['Ist_Kasten'], bestand, product[0]['Kasten_Size'])
 
+    @pyqtSlot(str)
+    def removeFromOrder(self, artikel):
+        print(artikel)
+        product = self._artikeldao.select_article(artikel)
+        self._artikeldao.edit_article(artikel, artikel, product[0]['Bild'], product[0]['Mitglieder_Preis'], product[0]['Besucher_Preis'], product[0]['Ist_Kasten'], product[0]['Bestand'] + 1, product[0]['Kasten_Size'])
     

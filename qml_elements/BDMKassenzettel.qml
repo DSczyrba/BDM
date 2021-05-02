@@ -463,11 +463,11 @@ Pane {
                                         anchors.fill: parent
                                         text: "Ok"
                                         onClicked: {
-                                            popup.close()
                                             kassencontroller.einzahlen(pName.text, einzahlung.text, pPreis.text, kasse.text)
                                             bestellungcontroller.getUsers()
                                             kassencontroller.getUsers()
                                             kassencontroller.getKasse()
+                                            popup.close()
                                         }
                                     }
                                 }

@@ -10,6 +10,7 @@ class ArtikelController(QObject):
     anzeigeDatenAktualiesieren = pyqtSignal(list)
     cbIndexAktualisieren = pyqtSignal(int)
     imPathAktualisiert = pyqtSignal(str)
+    bestandCheck = pyqtSignal(int)
 
     def __init__(self, artikelmodel, artikelbmodel):
         QObject.__init__(self)
@@ -25,10 +26,11 @@ class ArtikelController(QObject):
             self._artikelmodel.deleteProdukt(0)
         for i in range(len(artikel_data)):
             if mitglied == 'Vereinsmitglied':
-                preis = "{:,.2f}€".format(artikel_data[i]['Mitglieder_Preis'])
+                preis = "{:.2f}€".format(artikel_data[i]['Mitglieder_Preis'])
             else:
-                preis = "{:,.2f}€".format(artikel_data[i]['Besucher_Preis'])            
-            self._artikelmodel.addProdukt(artikel_data[i]['Name'], preis, artikel_data[i]['Bild'])
+                preis = "{:.2f}€".format(artikel_data[i]['Besucher_Preis'])            
+            self._artikelmodel.addProdukt(artikel_data[i]['Name'], preis, artikel_data[i]['Bild'], artikel_data[i]['Bestand'])
+        self.bestandCheck.emit(artikel_data[i]['Bestand'])
 
     @pyqtSlot()
     def getArtikelB(self):
@@ -40,8 +42,8 @@ class ArtikelController(QObject):
         while self._artikelbmodel.rowCount() != 0:
             self._artikelbmodel.deleteProdukt(0)
         for i in range(len(artikel_data)):
-            mpreis = "{:,.2f}€".format(artikel_data[i]['Mitglieder_Preis'])
-            preis = "{:,.2f}€".format(artikel_data[i]['Besucher_Preis'])            
+            mpreis = "{:.2f}€".format(artikel_data[i]['Mitglieder_Preis'])
+            preis = "{:.2f}€".format(artikel_data[i]['Besucher_Preis'])            
             self._artikelbmodel.addProdukt(artikel_data[i]['Name'], preis, mpreis, artikel_data[i]['Bild'], artikel_data[i]['Bestand'])
 
     @pyqtSlot(str)

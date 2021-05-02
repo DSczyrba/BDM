@@ -490,6 +490,7 @@ Pane {
                                 jaRb.checked = true
                                 kastenSize.text = ""
                                 bildInput.text = ""
+                                artikelcontroller.getArtikelB()
                             }
                         }
                     }
@@ -569,14 +570,12 @@ Pane {
                         Button { id: pBeatbeiten; text: 'Bearbeiten'; anchors.left: parent.left; anchors.leftMargin: 40; anchors.top: tfBestand.bottom; anchors.topMargin: 20; width: parent.width / 2- 50
                             onClicked: {
                                 artikelcontroller.updateArtikel(tfName.text, tfPreis.text, tfMPreis.text, tfBestand.text);
-                                artikelcontroller.getArtikel();
                                 artikelcontroller.getArtikelB();
                             }
                         }
                         Button { id: pLoeschen; text: 'Löschen'; anchors.right: parent.right; anchors.rightMargin: 10; anchors.top: tfBestand.bottom; anchors.topMargin: 20; width: parent.width / 2 - 50
                             onClicked: {
                                 artikelcontroller.deleteArtikel(tfName.text);
-                                artikelcontroller.getArtikel();
                                 artikelcontroller.getArtikelB();
                             }
                         }

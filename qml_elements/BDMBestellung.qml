@@ -55,6 +55,14 @@ Pane {
                 pPreis.text = data[0]
             }
         }
+
+        function onBestandCheck(bestand) {
+            
+            if (bestand == 0) {
+                pBestand.color = 'red';
+            }
+
+        }
     }
 
     GridLayout {
@@ -79,15 +87,69 @@ Pane {
                         anchors.fill: parent
                         Image { id: pIm; source: portrait; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter}
                         Text { id: pName; text: name; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pIm.bottom }
-                        Text { id : pPreis; text: preis; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pName.bottom}
+                        Text { id: pPreis; text: preis; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pName.bottom}
+                        Text { id: pBestand; text: 'Bestand: ' + bestand; anchors.horizontalCenter: parent.horizontalCenter; anchors.top: pPreis.bottom}
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                bestellModel.addProdukt(model.name, model.preis)
-                                var fEndsumme = endsumme.text.replace('€', '')
-                                var summe = parseFloat(fEndsumme) + parseFloat(model.preis)
-                                summe = summe.toFixed(2)
-                                endsumme.text = summe
+                                var bestand = pBestand.text.replace('Bestand: ', '')
+                                if (parseInt(bestand) > 0) {
+                                    bestand -= 1
+                                    pBestand.text = 'Bestand: ' + bestand.toString()
+                                    bestellModel.addProdukt(model.name, model.preis)
+                                    bestellungcontroller.updateBestand(bestand, model.name)
+                                    var fEndsumme = endsumme.text.replace('€', '')
+                                    var summe = parseFloat(fEndsumme) + parseFloat(model.preis)
+                                    summe = summe.toFixed(2)
+                                    endsumme.text = summe
+                                }
+                                else {
+                                    popup2.open()
+                                }
+                            }
+                        }
+                        Popup {
+                            id: popup2
+
+                            parent: Overlay.overlay
+
+                            x: Math.round((parent.width - width) / 2)
+                            y: Math.round((parent.height - height) / 2)
+                            width: 500
+                            height: 100
+
+                            GridLayout {
+                                anchors.fill: parent
+                                rows: 2
+                                columns: 2
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    Layout.columnSpan: 2
+                                    Layout.rowSpan: 1
+                                    Layout.row: 0
+                                    Layout.column: 0
+
+                                    Text {text: "Artikel leer!"}
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    Layout.columnSpan: 2
+                                    Layout.rowSpan: 1
+                                    Layout.row: 1
+                                    Layout.column: 0
+
+                                    Button {
+                                        anchors.fill: parent
+                                        text: "Abbrechen"
+                                        onClicked: {
+                                            popup2.close()
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -182,9 +244,11 @@ Pane {
                             Button { anchors.left: pPreis.left; anchors.top: parent.top; height: 15; text: "Löschen"; anchors.leftMargin: bestellListe.width / 2 - width; anchors.topMargin: 5
                                 onClicked: {
                                     bestellModel.deleteProdukt(model.index)
+                                    bestellungcontroller.removeFromOrder(pName.text)
                                     var ProPreis = pPreis.text.replace("€", "")
                                     var endSum = eval(endsumme.text - ProPreis)
                                     endsumme.text = endSum.toFixed(2)
+                                    bestellungcontroller.getCurrentCBData(nameCB.currentIndex)                                    
                                 }
                             }
                         }
